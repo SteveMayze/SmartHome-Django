@@ -52,10 +52,13 @@ coverage.xml
 # Django stuff:
 *.log
 local_settings.py
+<<<<<<< HEAD
 .DS_Store
 temp/
 *.sqlite*
 secretkey.txt
+=======
+>>>>>>> 4ca091ca2ecdf0b499c4d7568f5970e75a712f0b
 
 # Flask stuff:
 instance/
