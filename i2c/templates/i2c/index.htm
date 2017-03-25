@@ -1,0 +1,54 @@
+{% extends 'base.htm' %}
+{% load staticfiles %}
+
+{% block page_title_block %}
+    <h1>{{ pagetitle }}</h1>
+    <h2>{{ pagename }}</h2>
+{% endblock %}
+
+{% block body_block %}
+      <div class="container">
+        {% if user.is_authenticated %}
+          <p>
+            <a href="{% url 'i2c:refresh' %}" class="btn btn-sm btn-primary" role="button">Refresh Devices</a>
+            {% if new_found != None %}
+              {% if new_found == 0 %}
+                No new devices were found
+              {% else %}
+                New devices found: {{new_found}}
+              {% endif %}
+            {% endif %}
+          </p>
+        {% endif %}
+      </div>
+      <div>
+        {% if devices %}
+          <table class="table table-striped table-bordered" >
+            <thead>
+              <tr>
+                <th>Address</th>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead  class="thead-inverse">
+            <tbody>
+              {% for device in devices %}
+              {% if device.address > 0 %}
+                <tr>
+                  {% if user.is_authenticated %}
+                    <td><a href="{% url 'i2c:edit_device' device.slug %}">{{ device.address }}</a></td>
+                  {% else %}
+                    <td>{{ device.address }}</td>
+                  {% endif %}
+                  <td>{{ device.name }}</td>
+                  <td>{{ device.description }}</td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+            </tbody>  
+          </table>
+          {% else %}
+            <strong>There are no device types present</strong>
+        {% endif %}
+      </div>
+{% endblock %}

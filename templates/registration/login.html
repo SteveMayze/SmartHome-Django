@@ -1,0 +1,40 @@
+{% extends 'base.htm' %}
+{% load staticfiles %}
+
+
+{% block page_title_block %}
+    <h1>{{ pagetitle }}</h1>
+    <h2>{{ pagename }}</h2>
+{% endblock %}
+
+{% block body_block %}
+
+  <!-- link rel="stylesheet" type="text/css" href="http://v4-alpha.getbootstrap.com/examples/singin/signin.css" -->
+  <h1 class="form-signin-heading">Login</h1>
+  <form class="form-signin" role="form" method="post" action=".">
+    {% csrf_token %}
+    <h2 class="form-signin-heading">Please sign in</h2>
+    <label for="inputUsername" class="sr-only">Username</label>
+    <input type="text" name="username" id="id_username" class="form-control" placeholder="Username" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" name="password" id="id_password" class="form-control" placeholder="Password" required>
+    <p><button class="btn btn-lg btn-primary " type="submit" value="Submit">Sign in</button>
+    <a href="{% url 'registration_register' %}" class="btn btn-lg btn-info"  role="button">Register</a></p>
+  </form>
+
+
+<!--
+
+  {% if form_error and form_error != "" %}
+    <div style="color: red;">{{form_error}}</div>
+  {% endif %}
+
+  <form method="post" action=".">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Log in" >
+    <input type="hidden" name="next" value="{{ next }}" >
+
+  </form -->
+{% endblock %}
+

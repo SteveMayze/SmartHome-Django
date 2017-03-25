@@ -1,0 +1,13 @@
+{% extends 'base.htm' %}
+{% load staticfiles %}
+
+{% block page_title_block %}
+    <h1>{{ pagetitle }}</h1>
+{% endblock %}
+
+{% block body_block %}
+      <div>
+        <h2>Energy Usage Summary</h2>
+        <img src="{% url 'energy:energy-summary' %}" >
+      </div>
+{% endblock %}

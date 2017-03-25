@@ -1,0 +1,41 @@
+
+@media only screen and (max-width:800px){
+
+  #wrapper {
+    width:700px;
+    margin:0px auto;
+    background-color:#FFFFFF;
+  }
+
+
+  #main {
+    display:block;
+    flex-wrap:wrap;
+    flex-direction:row;
+    justify-content:center;
+    background-color: #dbe1e3;
+
+  }
+
+  header {
+    height: 133px;
+    background-color: #dbe1e3;
+    background-image: url("/static/image/ourhouse-logo_160_132_g.png") ;
+  	background-repeat: no-repeat; */
+
+  }
+
+  header h1{
+    font-size: 32px;
+  }
+
+  header h2 {
+    font-size: 16px;
+  }
+
+
+  section {
+    width:700px;
+  }
+
+}

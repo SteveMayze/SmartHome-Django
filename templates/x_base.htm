@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+{% load staticfiles %}
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+    <title>
+        {{ pagename }} 
+    </title>
+
+    <script>
+      document.createElement("header");
+      document.createElement("nav");
+      document.createElement("section");
+      document.createElement("aside");
+      document.createElement("footer");
+    </script>
+
+    <link href="{% static "ourhouse.css" %}" type="text/css" rel="stylesheet" />
+    <link href="{%  static "ourhouse_narrow.css" %}" type="text/css" rel="stylesheet" />
+
+</head>
+
+<body>
+<div id="wrapper">
+    <header>
+      {% block page_title_block %}
+      {% endblock %}
+      {% if user.is_authenticated %}
+        {{ user.username }}
+      {% else %}
+        guest
+      {% endif %}
+      <div>{{ visits }}</div>
+  </header>
+  <div id="main">
+    <nav>
+    <ul>
+      <li><a href="{% url 'main:index' %}">Start</a></li>
+      <li><a href="lighting.htm">Lighting</a></li>
+      <li><a href="{% url 'i2c:index' %}">Devices</a></li>
+      <li><a href="#">Energy</a></li>
+      <li><a href="#">Expenses</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'auth_logout' %}?next=/main/">Logout</a></li>
+      {% else %}
+        <li><a href="{% url 'auth_login' %}">Sign in</a></li>
+        <li><a href="{% url 'registration_register' %}">Register</a></li>
+      {% endif %}
+      <li><a href="{% url 'main:about' %}">about</a></li>
+    </ul>
+  </nav>
+  <section>
+    {% block body_block %}
+    {% endblock %}
+  </section>
+  <!-- aside>
+  </aside -->
+</div>
+    <footer>
+    <a href="../de/index.htm">Deutsch</a>
+  </footer>
+</div>
+
+</body>
+
+</html>
