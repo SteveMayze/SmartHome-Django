@@ -32,7 +32,7 @@
           {% else %}
             <li class="nav-item" >
           {% endif %}
-            <a class="nav-link" href="#">Lighting</a>
+            <a class="nav-link" href="{% url 'lighting:index' %}">Lighting</a>
           </li>
           {% if pagename == 'I2C Devices' %}
             <li class="nav-item active">

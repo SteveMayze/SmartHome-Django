@@ -28,6 +28,7 @@ class MyRegistrationView(RegistrationView):
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^main/', include('main.urls')),
+    url(r'^lighting/', include('lighting.urls')),
     url(r'^i2c/', include('i2c.urls')),
     url(r'^energy/', include('energy.urls')),
     url(r'^admin/', admin.site.urls),

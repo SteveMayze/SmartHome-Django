@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'main',
     'i2c',
     'energy',
+    'lighting',
 ]
 
 MIDDLEWARE = [
