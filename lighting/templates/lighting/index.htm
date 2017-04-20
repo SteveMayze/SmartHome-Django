@@ -14,6 +14,29 @@
         {% endif %}
       </div>
       <div>
-		Some lighting stuff
+         <table class="table table-striped table-bordered">
+            <thead class="thead-inverse">
+               <tr>
+                  <th>Name</th>
+                  <th>PIR Enabled</th>
+                  <th>Test Active</th>
+                  <th>On Delay</th>
+               </tr>
+            </thead>
+            <tbody>
+               {% for zone in zones %}
+               <tr>
+                  {% if user.is_authenticated %}
+                     <td> <a href="{% url 'lighting:edit_zone' zone.slug %}"> {{ zone.name }} </a></td>
+                  {% else %}
+                     <td> {{ zone.name }} </td>
+                  {% endif %}
+                  <td> {{ zone.pir_enabled }} </td>
+                  <td> {{ zone.test_active }} </td>
+                  <td> {{ zone.on_delay }} </td>
+               <tr>
+               {% endfor %}
+            </tbody>
+         </table>
       </div>
 {% endblock %}

@@ -16,7 +16,7 @@ def populate():
 	{"name":"OG", "pir_enabled":True, "test_active":False, "on_delay":10}, 
 	]
 
-	device = Device.objects.get(address=20) 
+	device = Device.objects.get(address=140) 
 	for zone in zones:
 		print("    DEVICE={0}, ZONE={1}".format(str(device), zone["name"]))
 		add_zone(device, zone["name"], zone["pir_enabled"], zone["test_active"], zone["on_delay"])

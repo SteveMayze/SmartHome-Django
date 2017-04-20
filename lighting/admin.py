@@ -1,6 +1,8 @@
 from django.contrib import admin
 from lighting.models import Zone
 
-# Register your models here.
+class ZoneAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug': ('device.name', 'name')}
+
 
 admin.site.register(Zone)
