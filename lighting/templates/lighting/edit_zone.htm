@@ -9,40 +9,39 @@
 
 {% block body_block %}
   <!-- div>
-    <form id="zone_form" class="form-signin" role="form" method="post" action=".">                    
+    <form id="zone_form" class="form-signin" role="form" method="post" action=".">
       {% csrf_token %}
       {{ zone_form.as_p }}
       <button class="btn btn-lg btn-primary " type="submit" value="Update">Update</button>
     </form>
   </div -->
 
-        
+
   <div class="container">
-    <form id="zone_form" role="form" method="post" action=".">
+    <form id="zone_form" class="form-horizontal" role="form" method="post" action=".">
       {% csrf_token %}
-      <div class="form-group"> 
+      <div class="form-group">
         <p class="required">
           {{zone_form.name.label_tag}}
           {{zone_form.name}}
         </p>
         <p>
-          {{zone_form.pir_enabled.label_tag}} 
+          {{zone_form.pir_enabled.label_tag}}
           {{zone_form.pir_enabled}}
-        </p>            
-        <p>    
+        </p>
+        <p>
           {{zone_form.test_active.label_tag}}
           {{zone_form.test_active}}
-        </p>                    
-        <p class="required">    
+        </p>
+        <p class="required">
           {{zone_form.on_delay.label_tag}}
           {{zone_form.on_delay}}
-        </p>                    
-      </div>                    
+        </p>
+      </div>
       <button class="btn btn-lg btn-primary" type="submit" value="Update">Update</button>                       
     </form>
   </div>
-                
-        
-                        
-{% endblock %}          
 
+
+
+{% endblock %}
