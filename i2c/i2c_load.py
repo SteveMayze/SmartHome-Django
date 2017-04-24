@@ -19,7 +19,8 @@ def i2c_refresh():
 				element = element.lstrip().rstrip()
 				if ( not (':' in element)):
 					if ( element != '--' and element != '' ):
-						found_count = add_device(element, "Undefined", "Not allocated", found_count)
+                                                address = int( "0x" + str(element), 0)
+						found_count = add_device(address, "Undefined", "Not allocated", found_count)
 	print("FOUND_COUNT="+str(found_count))
 	return found_count
 
@@ -34,4 +35,5 @@ def add_device( address, name, desc, found_count):
 		device.save()
 		found_count = found_count +1
 	return found_count
+
 
