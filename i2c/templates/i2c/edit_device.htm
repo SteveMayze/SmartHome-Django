@@ -18,26 +18,51 @@
   </div -->
 
 
-  <div class="container">
-    <form id="device_form" role="form" method="post" action=".">
+  <!-- div class="container" -->
+    <form class="form-horizontal" id="device_form" role="form" method="post" action=".">
       {% csrf_token %}
       <div class="form-group">
-        <p class="required">
-          {{ device_form.address.label_tag }}
+        <!-- p class="required" -->
+        <!-- div class="col-sm-2 control-label">
+           {{ device_form.address.label_tag }}
+        </div -->
+        <div class="row">
+        <label class="col-sm-2 control-label" for="{{ zone_form.address.id_for_label }}">Address:</label>
+        <div class="col-sm-4">
           {{ device_form.address }}
-        </p>
-        <p class="required">
+        </div>
+        </div>
+        <!-- /p -->
+      </div>
+      <div class="form-group">
+        <!-- p class="required" -->
+        <!-- div class="col-sm-2 control-label">
           {{ device_form.name.label_tag }}
+        </div -->
+        <div class="row">
+        <label class="col-sm-2 control-label" for="{{ zone_form.name.id_for_label }}">Name:</label>
+        <div class="col-sm-6">
           {{ device_form.name }}
-        </p>
-        <p class="required">
+        </div>
+        </div>
+        <!-- /p -->
+      </div>
+      <div class="form-group">
+        <!-- p class="required" -->
+        <!-- div class="col-sm-2 control-label">
           {{ device_form.description.label_tag }}
+        </div -->
+        <div class="row">
+        <label class="col-sm-2 control-label" for="{{ zone_form.description.id_for_label }}">Description:</label>
+        <div class="col-sm-6">
           {{ device_form.description }}
-        </p>
+        </div>
+        </div>
+        <!-- /p -->
       </div>
       <button class="btn btn-lg btn-primary" type="submit" value="Update">Update</button>
     </form>
-  </div>
+  <!-- /div -->
 
 
 

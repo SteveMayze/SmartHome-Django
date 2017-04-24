@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block body_block %}
+ <form id="zone_form" class="form-signin" role="form" method="post" action=".">
   <!-- div>
     <form id="zone_form" class="form-signin" role="form" method="post" action=".">
       {% csrf_token %}
@@ -17,30 +18,49 @@
   </div -->
 
 
-  <div class="container">
-    <form id="zone_form" class="form-horizontal" role="form" method="post" action=".">
+  <!-- div class="container" -->
       {% csrf_token %}
       <div class="form-group">
-        <p class="required">
-          {{zone_form.name.label_tag}}
+        <div class="row" >
+        <!-- p class="required" -->
+          <!-- {{zone_form.name.label_tag}} -->
+          <label class="col-sm-2 control-label" for="{{ zone_form.name.id_for_label }}">Name:</label>
+          <div class="col-sm-4">
           {{zone_form.name}}
-        </p>
-        <p>
-          {{zone_form.pir_enabled.label_tag}}
+        </div>
+        <!-- /p -->
+      </div>
+        <div class="row" >
+        <!-- p class="required" -->
+          <!-- {{zone_form.pir_enabled.label_tag}} -->
+          <label class="col-sm-2 control-label" for="{{ zone_form.pir_enabled.id_for_label }}">PIR enabled:</label>
+          <div class="col-sm-1">
           {{zone_form.pir_enabled}}
-        </p>
-        <p>
-          {{zone_form.test_active.label_tag}}
+        </div>
+        <!-- /p -->
+      </div>
+        <div class="row" >
+        <!-- p class="required" -->
+          <!-- {{zone_form.test_active.label_tag}} -->
+          <label class="col-sm-2 control-label" for="{{ zone_form.test_active.id_for_label }}">Test active:</label>
+          <div class="col-sm-1">
           {{zone_form.test_active}}
-        </p>
-        <p class="required">
-          {{zone_form.on_delay.label_tag}}
+        </div>
+        <!-- /p -->
+      </div>
+        <div class="row" >
+        <!-- p class="required" -->
+          <!-- {{zone_form.on_delay.label_tag}} -->
+          <label class="col-sm-2 control-label" for="{{ zone_form.on_delay.id_for_label }}">On delay:</label>
+          <div class="col-sm-4">
           {{zone_form.on_delay}}
-        </p>
+        </div>
+        <!-- /p -->
+      </div>
       </div>
       <button class="btn btn-lg btn-primary" type="submit" value="Update">Update</button>                       
     </form>
-  </div>
+  <!-- /div -->
 
 
 
