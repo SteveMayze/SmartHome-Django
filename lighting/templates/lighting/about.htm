@@ -1,15 +1,14 @@
 {% extends 'base.htm' %}
 {% load staticfiles %}
 
+
 {% block page_title_block %}
     <h1>{{ pagetitle }}</h1>
+    <h2>{{ pagename }}</h2>
 {% endblock %}
 
 {% block body_block %}
       <div>
-        <h2>Energy Usage Summary</h2>
-        <div class="col-sm-10">
-        <img src="{% url 'energy:energy-summary' %}" >
-    </div>
+        <p>About the lighting APP</p>
       </div>
 {% endblock %}

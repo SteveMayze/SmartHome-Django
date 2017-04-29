@@ -23,11 +23,12 @@ from registration.backends.simple.views import RegistrationView
 # if successful at logging in
 class MyRegistrationView(RegistrationView):
     def get_success_url(self, user):
-        return '/rango/'
+        return '/main/'
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^main/', include('main.urls')),
+    url(r'^lighting/', include('lighting.urls')),
     url(r'^i2c/', include('i2c.urls')),
     url(r'^energy/', include('energy.urls')),
     url(r'^admin/', admin.site.urls),

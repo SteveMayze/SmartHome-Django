@@ -24,23 +24,24 @@ def populate():
         add_resource(resource["name"])
 
     # Now load the resource entries, each for Water, Electricity and Gas
-    
-    elec = pd.read_csv('/home/pi/web/django/ourhouse_site/energy_data/elec.csv')
+
+    cwd = os.getcwd()
+
+    elec = pd.read_csv(cwd + '/energy_data/elec.csv')
     res = Resource.objects.get(name="Electricity")
     populate_resource_entry( res, elec)
 
-    gas = pd.read_csv('/home/pi/web/django/ourhouse_site/energy_data/gas.csv')
+    gas = pd.read_csv(cwd + '/energy_data/gas.csv')
     res = Resource.objects.get(name="Gas")
     populate_resource_entry( res, gas)
-    water = pd.read_csv('/home/pi/web/django/ourhouse_site/energy_data/water.csv')
+    water = pd.read_csv(cwd + '/energy_data/water.csv')
     res = Resource.objects.get(name="Water")
     populate_resource_entry( res, water)
 
     # Lastly, the gas factor table.
     ##    
-    gFactor = pd.read_csv('/home/pi/web/django/ourhouse_site/energy_data/gf.csv')
+    gFactor = pd.read_csv(cwd + '/energy_data/gf.csv')
 
-    ## gas_factors = pd.read_csv('d:\Dropbox\EA\HomeAutomation\web\django\ourhouse_site\energy_data\gf.csv')
     res = Resource.objects.get(name="Gas")
     populate_gas_factor( res, gFactor )
 
