@@ -4,7 +4,7 @@ from i2c.models import Device
 from i2c.forms import DeviceForm
 from django.contrib.auth.decorators import login_required
 ## from i2c.i2c_devices import i2c_refresh
-from i2c.i2c_load import i2c_refresh
+from i2c.i2c_lib import i2c_refresh
 
 def index( request, new_found=-1 ):
 

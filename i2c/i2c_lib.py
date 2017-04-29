@@ -1,6 +1,7 @@
 
 import os
 import django
+import re
 django.setup
 from i2c.models import Device
 
@@ -35,5 +36,24 @@ def add_device( address, name, desc, found_count):
 		device.save()
 		found_count = found_count +1
 	return found_count
+
+
+def i2c_lighting_sync( address ):
+	hexAddr = hex( int(address) ).split('x')[-1]
+	print("Synchronising the DB with the actual device at {0} ({0:2x}) state.".format(int(address)))
+	i2cLines = os.popen('i2cdump -y -r 0x00-0x08 1 0x20').readlines()
+	elems = re.split(r' ', i2cLines[1])
+	registers = {}
+	registers["status"] = int( "0x" + str(elems[1]), 0);
+	registers["config"] = int( "0x" + str(elems[2]), 0);
+	registers["UG_on_delay"] = int( "0x" + str(elems[3]), 0);
+	registers["EG_on_delay"] = int( "0x" + str(elems[4]), 0);
+	registers["OG_on_delay"] = int( "0x" + str(elems[5]), 0);
+	registers["firmware"] = int( "0x" + str(elems[6]), 0);
+	print("ADDRESS={0} ({0:2x}) REGISTERS={1}".format(int(address), str(registers)))
+	# print("ADDRESS= " + address + " ( 0x" + hexAddr + ") REGISTERS=" + str(registers))
+	return registers
+
+
 
 

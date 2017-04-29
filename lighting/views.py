@@ -4,17 +4,17 @@ from lighting.forms import ZoneForm
 from django.contrib.auth.decorators import login_required
 
 from lighting.models import Zone
+from i2c.models import Device
+
+from i2c.i2c_lib import i2c_lighting_sync
 
 # Create your views here.
 
 
-def index( request, new_found=-1 ):
+def index( request ):
 
         zone_list = Zone.objects.order_by('name')
         context_dict = {'pagetitle': 'Our House','pagename': 'Lighting', 'titlebar': 'Lighting zones', "zones": zone_list}
-        if new_found >= 0:
-                context_dict["new_found"] = new_found
-
         return render(request, 'lighting/index.htm', context=context_dict)
 
 
@@ -43,7 +43,40 @@ def edit_zone( request, zone_slug ):
 			'titlebar': 'Lighting', 'zone_form': form}
 	return render (request, 'lighting/edit_zone.htm', context_dict)
 
+@login_required
+def sync( request, address ):
+	registers = i2c_lighting_sync( address )
+	print("Lighting: ADDRESS={0} ({0:2x}) REGISTERS={1}".format(int(address), str(registers)))
+	pir_config = (0xF0 & registers["config"]) >> 4
+	zone_config = 0x0F & registers["config"]
+	status = registers["status"]
+	config = {}
+	config["pir_ug_enabled"] = 0x01 & pir_config
+	config["pir_eg_enabled"] = (0x02 & pir_config) >> 1
+	config["pir_og_enabled"] = (0x04 & pir_config) >> 2
 
+	config["ug_test_active"] = 0x01 & zone_config
+	config["eg_test_active"] = (0x02 & zone_config)>> 1
+	config["og_test_active"] = (0x04 & zone_config) >> 2
+
+	print("CONFIG={0}".format(str(config)))
+
+	device = Device.objects.get(address = address)
+
+	updateZone( device=device, name="UG", pir_enabled=config["pir_ug_enabled"], test_active=config["ug_test_active"], on_delay=registers["UG_on_delay"])
+	updateZone( device=device, name="EG", pir_enabled=config["pir_eg_enabled"], test_active=config["eg_test_active"], on_delay=registers["EG_on_delay"])
+	updateZone( device=device, name="OG", pir_enabled=config["pir_og_enabled"], test_active=config["og_test_active"], on_delay=registers["OG_on_delay"])
+
+	return index( request )
+
+
+def updateZone(device, name, pir_enabled, test_active, on_delay):
+	print("Saving device={0}, name={1}, pir_enabled={2}, test_active={3}, on_delay={4}".format(str(device), name, pir_enabled, test_active, on_delay))
+	zone = Zone.objects.get(device=device, name=name)
+	zone.pir_enabled=pir_enabled
+	zone.test_active=test_active
+	zone.on_delay=on_delay
+	zone.save()
 
 def about( request ):
         if request.session.test_cookie_worked():
