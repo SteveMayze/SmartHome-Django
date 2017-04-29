@@ -7,6 +7,18 @@ from lighting.models import Zone
 from i2c.models import Device
 
 from i2c.i2c_lib import i2c_lighting_sync
+from i2c.i2c_lib import i2c_lighting_save_registers
+
+
+
+def set_bit(data, index, value):
+	print("BEFORE {0:b}, index={1}, value={2}".format(data, index, value))
+	mask = 1 << index
+	data &= ~mask
+	if value:
+		data |= mask
+	print("AFTER {0:b}, index={1}, value={2}".format(data, index, value))
+	return data
 
 # Create your views here.
 
@@ -33,6 +45,21 @@ def edit_zone( request, zone_slug ):
 				zone = form.save(commit=False)
 				zone.slug = zone_slug
 				zone.save()
+				registers = i2c_lighting_sync( zone.device.address )
+				config = registers["config"]
+
+				nameMap = { "UG":1, "EG":2, "OG":4}
+				shiftMap = { "UG":0, "EG":1, "OG":2}
+
+				config = set_bit(config, 4 + shiftMap[zone.name], zone.pir_enabled)
+				config = set_bit(config, shiftMap[zone.name], zone.test_active)
+
+				registers["config"] = config
+				registers[zone.name+"_on_delay"] = zone.on_delay
+
+				print("SAVING REGISTERS {0}".format(str(registers)))
+ 
+				i2c_lighting_save_registers( zone.device.address, registers )
 				return index(request)
 			else:
 				print(form.errors)
@@ -77,6 +104,7 @@ def updateZone(device, name, pir_enabled, test_active, on_delay):
 	zone.test_active=test_active
 	zone.on_delay=on_delay
 	zone.save()
+
 
 def about( request ):
         if request.session.test_cookie_worked():
