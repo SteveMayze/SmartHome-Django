@@ -50,7 +50,13 @@ def index( request ):
         context_dict['visits'] = request.session['visits']
         response = render(request, 'index.htm', context=context_dict)
 
-        return response 
+        return response
+
+def dashboard( request ):
+        response = render(request, 'main/dashboard.htm')
+        return response
+
+
 
 def about( request ):
         if request.session.test_cookie_worked():

@@ -1,0 +1,52 @@
+  
+{% extends 'base.htm' %}
+{% load staticfiles %}
+
+{% block page_title_block %}
+   <h1>{{ pagetitle }}</h1>
+{% endblock %}
+
+{% block body_block %}
+    <div >
+    <div><img src="{% static "main/image/gabel.png" %}"/></div>
+    <div><img src="{% static "main/image/Level-Disabled.png" %}"/></div>
+    <div><img src="{% static "main/image/Level-Enabled.png" %}"/></div>
+    <div><img src="{% static "main/image/Level-Illuminated.png" %}"/></div>
+  </div>
+  <br/>
+  <div id="show-data"></div>
+  <div><a href="#" id="get-data" class="btn btn-sm btn-primary" >Get Details</a></div>
+{% endblock %}
+
+
+{% block javascript %}
+  <script>
+  $(document).ready(function () {
+    $('#get-data').click(function () {
+
+      $.getJSON('http://home-pi:8000/i2c/api/1.0/lighting/32/', function (data) {
+        console.log(data);
+
+        var result = '<ul>';
+        result = result.concat('<li>Status ');
+        result = result.concat(data.status)
+        result = result.concat('</li><li>Config ');
+        result = result.concat(data.config)
+        result = result.concat('</li><li>Lower level delay ');
+        result = result.concat(data.UG_on_delay)
+        result = result.concat('</li><li>Ground level delay ');
+        result = result.concat(data.EG_on_delay)
+        result = result.concat('</li><li>Upper level delay ');
+        result = result.concat(data.OG_on_delay)
+        result = result.concat('</li><li>Firmware ');
+        result = result.concat(data.firmware)
+        result = result.concat('</li>');
+        result = result.concat('</ul>');
+        console.log(result);
+        $('#show-data').html(result);
+      });
+    });
+  });
+  </script>
+{% endblock %}
+

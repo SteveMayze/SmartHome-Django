@@ -64,6 +64,13 @@ def i2c_lighting_save_registers(address, registers):
 
 def i2c_get_status( address ):
         hexAddr = hex( int(address) ).split('x')[-1]
-        print("Getting the config register from {0}".format(int(address)))
         status = os.popen("i2cget -y 1 0x{0:x} 00".format(int(str(address)))).readlines()
         return int( status[0], 0)
+
+def i2c_get_config( address ):
+        hexAddr = hex( int(address) ).split('x')[-1]
+        status = os.popen("i2cget -y 1 0x{0:x} 0x01".format(int(str(address)))).readlines()
+        return int( status[0], 0)
+
+
+

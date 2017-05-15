@@ -14,7 +14,6 @@ PIR_EVENT = 7 # G04
 
 def pir_handler(pin):
 	status = i2c_get_status( 32 )
-	print("STATUS="+str(status))
 	print("An event has occured on PIN {0}. STATUS={1:08b}".format(pin, status))
 	time.sleep(1)
 	registers = i2c_get_status( 32 )

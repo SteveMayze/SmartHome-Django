@@ -1,10 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
+from django.http import HttpResponseBadRequest
+
 from i2c.models import Device
 from i2c.forms import DeviceForm
 from django.contrib.auth.decorators import login_required
 ## from i2c.i2c_devices import i2c_refresh
-from i2c.i2c_lib import i2c_refresh
+from i2c.i2c_lib import i2c_refresh, i2c_lighting_sync
+import json
 
 def index( request, new_found=-1 ):
 
@@ -59,5 +63,15 @@ def about( request ):
         context_dict = {'pagetitle': 'Our House',
                         'pagename' : 'Our Hourse - About'}
         return render(request, 'about.htm', context=context_dict)
+
+
+@login_required
+def lighting_details( request, device_address):
+        if request.method == 'GET':
+                registers = i2c_lighting_sync( device_address )
+                
+                return JsonResponse(registers)
+        return HttpResponseBadRequest()
+        
 
 
