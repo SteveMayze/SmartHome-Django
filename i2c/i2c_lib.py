@@ -69,8 +69,8 @@ def i2c_get_status( address ):
 
 def i2c_get_config( address ):
         hexAddr = hex( int(address) ).split('x')[-1]
-        status = os.popen("i2cget -y 1 0x{0:x} 0x01".format(int(str(address)))).readlines()
-        return int( status[0], 0)
+        config = os.popen("i2cget -y 1 0x{0:x} 0x01".format(int(str(address)))).readlines()
+        return int( config[0], 0)
 
 
 

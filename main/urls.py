@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^dashboard$', views.dashboard, name='dashboard'),
     url(r'^about$', views.about, name = 'about'),
+    url(r'dashboard_refresh', views.dashboard_refresh, name='dashboard_refresh'),
   #  url(r'^login$', views.user_login, name = 'login'),
   #  url(r'^logout$', views.user_logout, name = 'logout'),
   #  url(r'^register$', views.register, name = 'register')

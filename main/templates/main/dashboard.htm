@@ -9,13 +9,42 @@
 {% block body_block %}
     <div >
     <div><img src="{% static "main/image/gabel.png" %}"/></div>
-    <div><img src="{% static "main/image/Level-Disabled.png" %}"/></div>
-    <div><img src="{% static "main/image/Level-Enabled.png" %}"/></div>
-    <div><img src="{% static "main/image/Level-Illuminated.png" %}"/></div>
+
+    <div>
+    {% if OG_State == "ON" %}
+    <img src="{% static "main/image/Level-Illuminated.png" %}"/>
+    {% elif OG_State == "OFF" %}
+    <img src="{% static "main/image/Level-Enabled.png" %}"/>
+    {% elif OG_State == "DISABLED" %}
+    <img src="{% static "main/image/Level-Disabled.png" %}"/>
+    {% endif %}
+    </div>
+
+    <div>
+    {% if EG_State == "ON" %}
+    <img src="{% static "main/image/Level-Illuminated.png" %}"/>
+    {% elif EG_State == "OFF" %}
+    <img src="{% static "main/image/Level-Enabled.png" %}"/>
+    {% elif EG_State == "DISABLED" %}
+    <img src="{% static "main/image/Level-Disabled.png" %}"/>
+    {% endif %}
+    </div>
+
+    <div>
+    {% if UG_State == "ON" %}
+    <img src="{% static "main/image/Level-Illuminated.png" %}"/>
+    {% elif UG_State == "OFF" %}
+    <img src="{% static "main/image/Level-Enabled.png" %}"/>
+    {% elif UG_State == "DISABLED" %}
+    <img src="{% static "main/image/Level-Disabled.png" %}"/>
+    {% endif %}
+    </div>
+
   </div>
   <br/>
   <div id="show-data"></div>
   <div><a href="#" id="get-data" class="btn btn-sm btn-primary" >Get Details</a></div>
+  <div><a href="{% url 'main:dashboard_refresh' %}" id="get-data" class="btn btn-sm btn-primary" role="button" >Get Details</a></div>
 {% endblock %}
 
 
@@ -29,9 +58,9 @@
 
         var result = '<ul>';
         result = result.concat('<li>Status ');
-        result = result.concat(data.status)
+        result = result.concat(("00000000"+data.status.toString(2)).substr(-8))
         result = result.concat('</li><li>Config ');
-        result = result.concat(data.config)
+        result = result.concat(("00000000"+data.config.toString(2)).substr(-8))
         result = result.concat('</li><li>Lower level delay ');
         result = result.concat(data.UG_on_delay)
         result = result.concat('</li><li>Ground level delay ');

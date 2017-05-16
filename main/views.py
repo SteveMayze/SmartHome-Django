@@ -7,6 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from datetime import datetime
 
+from i2c.i2c_lib import i2c_get_status
+from i2c.i2c_lib import i2c_get_config
+
+
 def get_server_side_cookie(request, cookie, default_val=None):
         val = request.session.get(cookie)
         if not val:
@@ -52,10 +56,41 @@ def index( request ):
 
         return response
 
-def dashboard( request ):
-        response = render(request, 'main/dashboard.htm')
+def dashboard( request , status_dict=None):
+        if status_dict == None:
+                print("Calling the dashboard refresh for the first time")
+                dashboard_refresh( request )
+        print("STATUS_DICT=" + str(status_dict))
+        response = render(request, 'main/dashboard.htm', context=status_dict)
         return response
 
+def dashboard_refresh( request ):
+        status_int = i2c_get_status( 32 )
+        config_int = i2c_get_config( 32 )
+        print("status {0:08b}, config {1:08b}".format(status_int, config_int))
+        status_dict = {"UG_State": "DISABLED", "EG_State": "DISABLED", "OG_State": "DISABLED" }
+        
+        if config_int & 0b00010000 >= 1:
+                print("Setting UG to OFF")
+                status_dict["UG_State"]="OFF"
+        if config_int & 0b00100000 >= 1:
+                print("Setting EG to OFF")
+                status_dict["EG_State"]="OFF"
+        if config_int & 0b01000000 >= 1:
+                print("Setting OG to OFF")
+                status_dict["OG_State"]="OFF"
+           
+        if status_int & 0b00000001 >= 1:
+                print("Setting UG to ON")
+                status_dict["UG_State"] = "ON"
+        if status_int & 0b00000010 >= 1:
+                print("Setting EG to ON")
+                status_dict["EG_State"] = "ON"
+        if status_int & 0b00000100 >= 1:
+                print("Setting OG to ON")
+                status_dict["OG_State"] = "ON"
+                
+        return dashboard( request, status_dict )
 
 
 def about( request ):
