@@ -12,31 +12,31 @@
 
     <div>
     {% if OG_State == "ON" %}
-    <img src="{% static "main/image/Level-Illuminated.png" %}"/>
+    <img id="og_img" src="{% static "main/image/Level-Illuminated.png" %}"/>
     {% elif OG_State == "OFF" %}
-    <img src="{% static "main/image/Level-Enabled.png" %}"/>
+    <img id="og_img" src="{% static "main/image/Level-Enabled.png" %}"/>
     {% elif OG_State == "DISABLED" %}
-    <img src="{% static "main/image/Level-Disabled.png" %}"/>
+    <img id="og_img" src="{% static "main/image/Level-Disabled.png" %}"/>
     {% endif %}
     </div>
 
     <div>
     {% if EG_State == "ON" %}
-    <img src="{% static "main/image/Level-Illuminated.png" %}"/>
+    <img id="eg_img" src="{% static "main/image/Level-Illuminated.png" %}"/>
     {% elif EG_State == "OFF" %}
-    <img src="{% static "main/image/Level-Enabled.png" %}"/>
+    <img id="eg_img" src="{% static "main/image/Level-Enabled.png" %}"/>
     {% elif EG_State == "DISABLED" %}
-    <img src="{% static "main/image/Level-Disabled.png" %}"/>
+    <img id="eg_img" src="{% static "main/image/Level-Disabled.png" %}"/>
     {% endif %}
     </div>
 
     <div>
     {% if UG_State == "ON" %}
-    <img src="{% static "main/image/Level-Illuminated.png" %}"/>
+    <img id="ug_img" src="{% static "main/image/Level-Illuminated.png" %}"/>
     {% elif UG_State == "OFF" %}
-    <img src="{% static "main/image/Level-Enabled.png" %}"/>
+    <img id="ug_img" src="{% static "main/image/Level-Enabled.png" %}"/>
     {% elif UG_State == "DISABLED" %}
-    <img src="{% static "main/image/Level-Disabled.png" %}"/>
+    <img id="ug_img" src="{% static "main/image/Level-Disabled.png" %}"/>
     {% endif %}
     </div>
 
@@ -50,7 +50,58 @@
 
 {% block javascript %}
   <script>
+     $(function () {
+        var ws_path = "/stream/";
+	console.log("Connecting to  + ws_path")
+
+    	var webSocketBridge = new channels.WebSocketBridge();
+	webSocketBridge.connect(ws_path);
+	webSocketBridge.listen();
+	webSocketBridge.demultiplex('tl2c_state', function(payload, streamName) {
+           if (payload.action == "create") {
+              data = payload.data
+              console.log("data: " + payload.data + " " );
+              status = payload.data.status;
+              console.log("STATUS=" + (status >>> 0).toString(2))
+              if ((status & 0b000001) > 0) {
+                 console.log("UG is ON!")
+                 $('#ug_img').attr('src',"{% static "main/image/Level-Illuminated.png" %}");
+              } else {
+                 console.log("UG is OFF!")
+                 $('#ug_img').attr('src',"{% static "main/image/Level-Enabled.png" %}");
+              }
+              if ((status & 0b000010) > 0) {
+                 console.log("EG is ON!")
+                 $('#eg_img').attr('src',"{% static "main/image/Level-Illuminated.png" %}");
+              } else {
+                 console.log("EG is OFF!")
+                 $('#eg_img').attr('src',"{% static "main/image/Level-Enabled.png" %}");
+              }
+              if ((status & 0b000100) > 0) {
+                 console.log("OG is ON!")
+                 $('#og_img').attr('src',"{% static "main/image/Level-Illuminated.png" %}");
+              } else {
+                 console.log("OG is OFF!")
+                 $('#og_img').attr('src',"{% static "main/image/Level-Enabled.png" %}");
+              }
+              
+           }
+           
+	});
+
+        webSocketBridge.socket.onopen = function() { 
+           console.log("Connected to notification socket"); 
+        }
+        webSocketBridge.socket.onclose = function() { 
+           console.log("Disconnected to notification socket"); 
+        }
+	console.log("Finished setting up the websocket")
+
+/*    });
+
   $(document).ready(function () {
+*/
+
     $('#get-data').click(function () {
 
       $.getJSON('http://home-pi:8000/i2c/api/1.0/lighting/32/', function (data) {
@@ -75,7 +126,12 @@
         $('#show-data').html(result);
       });
     });
+
+
+
   });
+
+
   </script>
 {% endblock %}
 

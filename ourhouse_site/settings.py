@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mod_wsgi.server',
+    'channels',
+    #'mod_wsgi.server',
     'registration',
     'main',
     'i2c',
@@ -58,6 +59,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(redis_host, 6379)],
+            },
+        #	"BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "ourhouse_site.routing.channel_routing",
+        },
+}
+
 
 ROOT_URLCONF = 'ourhouse_site.urls'
 

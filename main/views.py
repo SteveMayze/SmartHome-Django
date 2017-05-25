@@ -7,8 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from datetime import datetime
 
-from i2c.i2c_lib import i2c_get_status
-from i2c.i2c_lib import i2c_get_config
+##from i2c.i2c_lib import i2c_get_status
+##from i2c.i2c_lib import i2c_get_config
+
+from lighting.models import LightHistory
 
 
 def get_server_side_cookie(request, cookie, default_val=None):
@@ -65,8 +67,11 @@ def dashboard( request , status_dict=None):
         return response
 
 def dashboard_refresh( request ):
-        status_int = i2c_get_status( 32 )
-        config_int = i2c_get_config( 32 )
+##        status_int = i2c_get_status( 32 )
+##        config_int = i2c_get_config( 32 )
+        history = LightHistory.objects.order_by('-timestamp')[0:1]
+        status_int = history[0].status
+        config_int = history[0].config
         print("status {0:08b}, config {1:08b}".format(status_int, config_int))
         status_dict = {"UG_State": "DISABLED", "EG_State": "DISABLED", "OG_State": "DISABLED" }
         
