@@ -8,18 +8,49 @@
 
 {% block body_block %}
    <div class="container">
-   {% if user.is_authenticated %}
-      <p>
-         {% with zones.0 as zone %}
-            <a href="{% url 'lighting:sync' zone.device.address %}" class="btn btn-sm btn-primary" role="button">Sync</a>
-         {% endwith %}
-      </p>
-   {% endif %}
-   </div>
-   <div class="container">
+
+   <div class="row">
+      <div id="house_status" class="col-md-2">
+         <div><img src="{% static "lighting/image/gabel.png" %}"/></div>
+         <div>
+            {% if OG_State == "ON" %}
+               <img id="og_img" src="{% static "lighting/image/Level-Illuminated.png" %}"/>
+            {% elif OG_State == "OFF" %}
+               <img id="og_img" src="{% static "lighting/image/Level-Enabled.png" %}"/>
+            {% elif OG_State == "DISABLED" %}
+               <img id="og_img" src="{% static "lighting/image/Level-Disabled.png" %}"/>
+            {% endif %}
+         </div>
+     
+         <div>
+            {% if EG_State == "ON" %}
+               <img id="eg_img" src="{% static "lighting/image/Level-Illuminated.png" %}"/>
+            {% elif EG_State == "OFF" %}
+               <img id="eg_img" src="{% static "lighting/image/Level-Enabled.png" %}"/>
+            {% elif EG_State == "DISABLED" %}
+               <img id="eg_img" src="{% static "lighting/image/Level-Disabled.png" %}"/>
+            {% endif %}
+         </div>
+     
+         <div>
+            {% if UG_State == "ON" %}
+               <img id="ug_img" src="{% static "lighting/image/Level-Illuminated.png" %}"/>
+            {% elif UG_State == "OFF" %}
+               <img id="ug_img" src="{% static "lighting/image/Level-Enabled.png" %}"/>
+            {% elif UG_State == "DISABLED" %}
+               <img id="ug_img" src="{% static "lighting/image/Level-Disabled.png" %}"/>
+            {% endif %}
+         </div>
+      </div>
+
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+
+   <!-- div class="container" -->
       <table class="table table-striped table-bordered">
          <thead class="thead-inverse">
             <tr>
+               <th></th>
                <th>Name</th>
                <th>PIR Enabled</th>
                <th>Test Active</th>
@@ -27,13 +58,22 @@
             </tr>
          </thead>
          <tbody>
-            {% with zones.2 as zone %}
+            {% with zones.1 as zone %}
             <tr>
                <td>
+                  {% if OG_State == "ON" %}
+                     <img height="40" width="40" id="og_img_sm" src="{% static "lighting/image/Level-Illuminated-sm.png" %}"/>
+                  {% elif OG_State == "OFF" %}
+                     <img height="40" width="40" id="og_img_sm" src="{% static "lighting/image/Level-Enabled-sm.png" %}"/>
+                  {% elif OG_State == "DISABLED" %}
+                     <img height="40" width="40" id="og_img_sm" src="{% static "lighting/image/Level-Disabled-sm.png" %}"/>
+                  {% endif %}
+               </td>
+               <td>
                   {% if user.is_authenticated %}
-                     <a href="{% url 'lighting:edit_zone' zone.slug %}"> Lower level ({{ zone.name }}) </a>
+                     <a href="{% url 'lighting:edit_zone' zone.slug %}"> Upper level ({{ zone.name }}) </a>
                   {% else %}
-                     Lower level ({{ zone.name }})
+                     Upper level ({{ zone.name }})
                   {% endif %}
                </td>
                <td>
@@ -47,9 +87,17 @@
                </td>
             </tr>
             {% endwith %}
-   
             {% with zones.0 as zone %}
             <tr>
+               <td>
+                  {% if EG_State == "ON" %}
+                     <img height="40" width="40" id="eg_img_sm" src="{% static "lighting/image/Level-Illuminated-sm.png" %}"/>
+                  {% elif EG_State == "OFF" %}
+                     <img height="40" width="40" id="eg_img_sm" src="{% static "lighting/image/Level-Enabled-sm.png" %}"/>
+                  {% elif EG_State == "DISABLED" %}
+                     <img height="40" width="40" id="eg_img_sm" src="{% static "lighting/image/Level-Disabled-sm.png" %}"/>
+                  {% endif %}
+               </td>
                <td>
                   {% if user.is_authenticated %}
                      <a href="{% url 'lighting:edit_zone' zone.slug %}"> Ground level ({{ zone.name }}) </a>
@@ -69,13 +117,24 @@
             </tr>
             {% endwith %}
    
-            {% with zones.1 as zone %}
+            {% with zones.2 as zone %}
             <tr>
                <td>
+                  {% if UG_State == "ON" %}
+                     <img height="40" width="40" id="ug_img_sm" src="{% static "lighting/image/Level-Illuminated-sm.png" %}"/>
+                  {% elif UG_State == "OFF" %}
+                     <img height="40" width="40" id="ug_img_sm" src="{% static "lighting/image/Level-Enabled-sm.png" %}"/>
+                  {% elif UG_State == "DISABLED" %}
+                     <img height="40" width="40" id="ug_img_sm" src="{% static "lighting/image/Level-Disabled-sm.png" %}"/>
+                  {% endif %}
+               </td>
+               <td>
                   {% if user.is_authenticated %}
-                     <a href="{% url 'lighting:edit_zone' zone.slug %}"> Upper level ({{ zone.name }}) </a>
+                     <a href="{% url 'lighting:edit_zone' zone.slug %}"> 
+                        Lower level ({{ zone.name }}) 
+                     </a>
                   {% else %}
-                     Upper level ({{ zone.name }})
+                     Lower level ({{ zone.name }})
                   {% endif %}
                </td>
                <td>
@@ -89,7 +148,111 @@
                </td>
             </tr>
             {% endwith %}
+   
          </tbody>
       </table>
+      <div class="container">
+         {% if user.is_authenticated %}
+            <p>
+               {% with zones.0 as zone %}
+                  <a href="{% url 'lighting:sync' zone.device.address %}" class="btn btn-sm btn-primary" role="button">Sync</a>
+               {% endwith %}
+            </p>
+         {% endif %}
+      </div>
    </div>
+   </div>
+   </div>
+
+
 {% endblock %}
+
+
+{% block javascript %}
+  <script>
+     $(function () {
+        var ws_path = "/stream/";
+        console.log("Connecting to  + ws_path")
+
+        var webSocketBridge = new channels.WebSocketBridge();
+        webSocketBridge.connect(ws_path);
+        webSocketBridge.listen();
+        webSocketBridge.demultiplex('tl2c_state', function(payload, streamName) {
+           if (payload.action == "update" || payload.action == "create" ) {
+              data = payload.data
+              console.log("data: " + payload.data + " " );
+              status = payload.data.status;
+              config = payload.data.config;
+
+              console.log("STATUS=" + (status >>> 0).toString(2))
+
+              if ((status & 0b000001) > 0) {
+                 console.log("UG is ON!")
+                 $('#ug_img').attr('src',"{% static "lighting/image/Level-Illuminated.png" %}");
+                 $('#ug_img_sm').attr('src',"{% static "lighting/image/Level-Illuminated-sm.png" %}");
+              } else {
+                 if ((config & 0b00010000) > 0) {
+                    console.log("UG is OFF!")
+                    $('#ug_img').attr('src',"{% static "lighting/image/Level-Enabled.png" %}");
+                    $('#ug_img_sm').attr('src',"{% static "lighting/image/Level-Enabled-sm.png" %}");
+                 } else {
+                    console.log("UG is Disabled!")
+                    $('#ug_img').attr('src',"{% static "lighting/image/Level-Disabled.png" %}");
+                    $('#ug_img_sm').attr('src',"{% static "lighting/image/Level-Disabled-sm.png" %}");
+                 }
+              }
+
+              if ((status & 0b000010) > 0) {
+                 console.log("EG is ON!")
+                 $('#eg_img').attr('src',"{% static "lighting/image/Level-Illuminated.png" %}");
+                 $('#eg_img_sm').attr('src',"{% static "lighting/image/Level-Illuminated-sm.png" %}");
+              } else {
+                 if ((config & 0b00100000) > 0) {
+                    console.log("EG is OFF!")
+                    $('#eg_img').attr('src',"{% static "lighting/image/Level-Enabled.png" %}");
+                    $('#eg_img_sm').attr('src',"{% static "lighting/image/Level-Enabled-sm.png" %}");
+                 } else {
+                    console.log("EG is Disabled!")
+                    $('#eg_img').attr('src',"{% static "lighting/image/Level-Disabled.png" %}");
+                    $('#eg_img_sm').attr('src',"{% static "lighting/image/Level-Disabled-sm.png" %}");
+                 }
+              }
+
+              if ((status & 0b000100) > 0) {
+                 console.log("OG is ON!")
+                 $('#og_img').attr('src',"{% static "lighting/image/Level-Illuminated.png" %}");
+                 $('#og_img_sm').attr('src',"{% static "lighting/image/Level-Illuminated-sm.png" %}");
+              } else {
+                 if ((config & 0b01000000) > 0) {
+                    console.log("OG is OFF!")
+                    $('#og_img').attr('src',"{% static "lighting/image/Level-Enabled.png" %}");
+                    $('#og_img_sm').attr('src',"{% static "lighting/image/Level-Enabled-sm.png" %}");
+                 } else {
+                    console.log("OG is Disabled!")
+                    $('#og_img').attr('src',"{% static "lighting/image/Level-Disabled.png" %}");
+                    $('#og_img_sm').attr('src',"{% static "lighting/image/Level-Disabled-sm.png" %}");
+                 }
+              }
+
+           }
+
+        });
+
+        webSocketBridge.socket.onopen = function() {
+           console.log("Connected to notification socket");
+        }
+        webSocketBridge.socket.onclose = function() {
+           console.log("Disconnected to notification socket");
+        }
+        console.log("Finished setting up the websocket")
+
+
+  });
+
+  </script>
+{% endblock %}
+
+
+
+
+

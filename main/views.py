@@ -10,7 +10,8 @@ from datetime import datetime
 ##from i2c.i2c_lib import i2c_get_status
 ##from i2c.i2c_lib import i2c_get_config
 
-from lighting.models import LightHistory
+from lighting.models import LightingState
+from i2c.models import Device
 
 
 def get_server_side_cookie(request, cookie, default_val=None):
@@ -61,7 +62,7 @@ def index( request ):
 def dashboard( request , status_dict=None):
         if status_dict == None:
                 print("Calling the dashboard refresh for the first time")
-                dashboard_refresh( request )
+                return dashboard_refresh( request )
         print("STATUS_DICT=" + str(status_dict))
         response = render(request, 'main/dashboard.htm', context=status_dict)
         return response
@@ -69,9 +70,10 @@ def dashboard( request , status_dict=None):
 def dashboard_refresh( request ):
 ##        status_int = i2c_get_status( 32 )
 ##        config_int = i2c_get_config( 32 )
-        history = LightHistory.objects.order_by('-timestamp')[0:1]
-        status_int = history[0].status
-        config_int = history[0].config
+        device = Device.objects.get(name="Lighting")
+        history = LightingState.objects.get(device = device)
+        status_int = history.status
+        config_int = history.config
         print("status {0:08b}, config {1:08b}".format(status_int, config_int))
         status_dict = {"UG_State": "DISABLED", "EG_State": "DISABLED", "OG_State": "DISABLED" }
         
@@ -94,8 +96,10 @@ def dashboard_refresh( request ):
         if status_int & 0b00000100 >= 1:
                 print("Setting OG to ON")
                 status_dict["OG_State"] = "ON"
+
+        print("status_refresh status_dict=" + str(status_dict))
                 
-        return dashboard( request, status_dict )
+        return dashboard( request, status_dict=status_dict )
 
 
 def about( request ):

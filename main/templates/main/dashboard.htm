@@ -58,7 +58,7 @@
 	webSocketBridge.connect(ws_path);
 	webSocketBridge.listen();
 	webSocketBridge.demultiplex('tl2c_state', function(payload, streamName) {
-           if (payload.action == "create") {
+           if (payload.action == "update" || payload.action == "create" ) {
               data = payload.data
               console.log("data: " + payload.data + " " );
               status = payload.data.status;

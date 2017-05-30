@@ -22,19 +22,23 @@ class Zone( models.Model ):
         return "{0}: {1}".format(str(self.device.name), str(self.name))
 
     
-class LightHistory( models.Model ):
-    timestamp = models.DateTimeField(unique=True)
-    status = models.IntegerField()
-    config = models.IntegerField()
+class LightingState( models.Model ):
+##    timestamp = models.DateTimeField(unique=True)
+    device = models.ForeignKey( i2c.Device )
+    status = models.IntegerField(default=0)
+    config = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = "LightingState"
 
     def __str__(self):
-        return "{0}: {1}, {2}".format(str(self.timestamp), str(self.status), str(self.config))
+        return "{0}: {1}, {2}".format(str(self.device.name), str(self.status), str(self.config))
 
 
-class LightHistoryBinding(WebsocketBinding):
-    model = LightHistory
+class LightingStateBinding(WebsocketBinding):
+    model = LightingState
     stream = "tl2c_state"
-    fields = ["timestamp", "status", "config"]
+    fields = ["device", "status", "config"]
 
     @classmethod
     def group_names(cls, *args, **kwargs):

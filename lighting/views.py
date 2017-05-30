@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from lighting.forms import ZoneForm
 from django.contrib.auth.decorators import login_required
 
-from lighting.models import Zone
+from lighting.models import Zone, LightingState
 from i2c.models import Device
 
 from i2c.i2c_lib import i2c_lighting_sync
@@ -23,10 +23,18 @@ def set_bit(data, index, value):
 # Create your views here.
 
 
-def index( request ):
+def index( request , context_dict = None):
+
+        if context_dict == None:
+               return dashboard_refresh( request )
 
         zone_list = Zone.objects.order_by('name')
-        context_dict = {'pagetitle': 'Our House','pagename': 'Lighting', 'titlebar': 'Lighting zones', "zones": zone_list}
+        # context_dict = {"pagetitle": "Our House", "pagename": "Lighting", "titlebar": "Lighting zones", "zones": zone_list}
+        context_dict["pagetitle"] = "Our House"
+        context_dict["pagename"] = "Lighting"
+        context_dict["titlebar"] = "Lighting zones"
+        context_dict["zones"] = zone_list
+        
         return render(request, 'lighting/index.htm', context=context_dict)
 
 
@@ -94,7 +102,7 @@ def sync( request, address ):
 	updateZone( device=device, name="EG", pir_enabled=config["pir_eg_enabled"], test_active=config["eg_test_active"], on_delay=registers["EG_on_delay"])
 	updateZone( device=device, name="OG", pir_enabled=config["pir_og_enabled"], test_active=config["og_test_active"], on_delay=registers["OG_on_delay"])
 
-	return index( request )
+	return index( request , context_dict = None)
 
 
 def updateZone(device, name, pir_enabled, test_active, on_delay):
@@ -104,6 +112,58 @@ def updateZone(device, name, pir_enabled, test_active, on_delay):
 	zone.test_active=test_active
 	zone.on_delay=on_delay
 	zone.save()
+
+
+
+def dashboard( request , status_dict=None):
+        if status_dict == None:
+                print("Calling the dashboard refresh for the first time")
+                return dashboard_refresh( request )
+        print("STATUS_DICT=" + str(status_dict))
+        response = render(request, 'main/dashboard.htm', context=status_dict)
+        return response
+
+def dashboard_refresh( request ):
+        device = Device.objects.get(name="Lighting")
+        history = LightingState.objects.get(device = device)
+        status_int = history.status
+        config_int = history.config
+        print("status {0:08b}, config {1:08b}".format(status_int, config_int))
+        status_dict = {"UG_State": "DISABLED", "EG_State": "DISABLED", "OG_State": "DISABLED" }
+        
+        if config_int & 0b00010000 >= 1:
+                print("Setting UG to OFF")
+                status_dict["UG_State"]="OFF"
+        else:
+                print("Setting UG to DISABLED")
+                status_dict["UG_State"]="DISABLED"
+        if config_int & 0b00100000 >= 1:
+                print("Setting EG to OFF")
+                status_dict["EG_State"]="OFF"
+        else:
+                print("Setting EG to DISABLED")
+                status_dict["EG_State"]="DISABLED"
+        if config_int & 0b01000000 >= 1:
+                print("Setting OG to OFF")
+                status_dict["OG_State"]="OFF"           
+        else:
+                print("Setting OG to DISABLED")
+                status_dict["OG_State"]="DISABLED"
+                
+        if status_int & 0b00000001 >= 1:
+                print("Setting UG to ON")
+                status_dict["UG_State"] = "ON"
+        if status_int & 0b00000010 >= 1:
+                print("Setting EG to ON")
+                status_dict["EG_State"] = "ON"
+        if status_int & 0b00000100 >= 1:
+                print("Setting OG to ON")
+                status_dict["OG_State"] = "ON"
+
+        print("status_refresh status_dict=" + str(status_dict))
+                
+        return index( request, context_dict=status_dict )
+
 
 
 def about( request ):
