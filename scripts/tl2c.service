@@ -1,0 +1,13 @@
+[Unit]
+Description=TL2C I2C PIR Interrupt tracking service
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /var/local/tl2c/tl2c.sh
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+
+
