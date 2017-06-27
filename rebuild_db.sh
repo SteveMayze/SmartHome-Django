@@ -1,5 +1,10 @@
+#!/bin/bash
 
-# rm db.sqlite3 energy/migrations/0001_initial.py i2c/migrations/0001_initial.py main/migrations/0001_initial.py 
+# rm db.sqlite3 
+# rm energy/migrations/[0-9]{4}_\w.py 
+# rm i2c/migrations/[0-9]{4}_\w.py 
+# rm main/migrations/[0-9]{4}_\w.py 
+# rm lighting/migrations/[0-9]{4}_\w.py 
 
 
 python3 manage.py migrate

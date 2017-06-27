@@ -1,0 +1,137 @@
+  
+{% extends 'base.htm' %}
+{% load staticfiles %}
+
+{% block page_title_block %}
+   <h1>{{ pagetitle }}</h1>
+{% endblock %}
+
+{% block body_block %}
+    <div >
+    <div><img src="{% static "main/image/gabel.png" %}"/></div>
+
+    <div>
+    {% if OG_State == "ON" %}
+    <img id="og_img" src="{% static "main/image/Level-Illuminated.png" %}"/>
+    {% elif OG_State == "OFF" %}
+    <img id="og_img" src="{% static "main/image/Level-Enabled.png" %}"/>
+    {% elif OG_State == "DISABLED" %}
+    <img id="og_img" src="{% static "main/image/Level-Disabled.png" %}"/>
+    {% endif %}
+    </div>
+
+    <div>
+    {% if EG_State == "ON" %}
+    <img id="eg_img" src="{% static "main/image/Level-Illuminated.png" %}"/>
+    {% elif EG_State == "OFF" %}
+    <img id="eg_img" src="{% static "main/image/Level-Enabled.png" %}"/>
+    {% elif EG_State == "DISABLED" %}
+    <img id="eg_img" src="{% static "main/image/Level-Disabled.png" %}"/>
+    {% endif %}
+    </div>
+
+    <div>
+    {% if UG_State == "ON" %}
+    <img id="ug_img" src="{% static "main/image/Level-Illuminated.png" %}"/>
+    {% elif UG_State == "OFF" %}
+    <img id="ug_img" src="{% static "main/image/Level-Enabled.png" %}"/>
+    {% elif UG_State == "DISABLED" %}
+    <img id="ug_img" src="{% static "main/image/Level-Disabled.png" %}"/>
+    {% endif %}
+    </div>
+
+  </div>
+  <br/>
+  <div id="show-data"></div>
+  <div><a href="#" id="get-data" class="btn btn-sm btn-primary" >Get Details</a></div>
+  <div><a href="{% url 'main:dashboard_refresh' %}" id="get-data" class="btn btn-sm btn-primary" role="button" >Get Details</a></div>
+{% endblock %}
+
+
+{% block javascript %}
+  <script>
+     $(function () {
+        var ws_path = "/stream/";
+	console.log("Connecting to  + ws_path")
+
+    	var webSocketBridge = new channels.WebSocketBridge();
+	webSocketBridge.connect(ws_path);
+	webSocketBridge.listen();
+	webSocketBridge.demultiplex('tl2c_state', function(payload, streamName) {
+           if (payload.action == "update" || payload.action == "create" ) {
+              data = payload.data
+              console.log("data: " + payload.data + " " );
+              status = payload.data.status;
+              console.log("STATUS=" + (status >>> 0).toString(2))
+              if ((status & 0b000001) > 0) {
+                 console.log("UG is ON!")
+                 $('#ug_img').attr('src',"{% static "main/image/Level-Illuminated.png" %}");
+              } else {
+                 console.log("UG is OFF!")
+                 $('#ug_img').attr('src',"{% static "main/image/Level-Enabled.png" %}");
+              }
+              if ((status & 0b000010) > 0) {
+                 console.log("EG is ON!")
+                 $('#eg_img').attr('src',"{% static "main/image/Level-Illuminated.png" %}");
+              } else {
+                 console.log("EG is OFF!")
+                 $('#eg_img').attr('src',"{% static "main/image/Level-Enabled.png" %}");
+              }
+              if ((status & 0b000100) > 0) {
+                 console.log("OG is ON!")
+                 $('#og_img').attr('src',"{% static "main/image/Level-Illuminated.png" %}");
+              } else {
+                 console.log("OG is OFF!")
+                 $('#og_img').attr('src',"{% static "main/image/Level-Enabled.png" %}");
+              }
+              
+           }
+           
+	});
+
+        webSocketBridge.socket.onopen = function() { 
+           console.log("Connected to notification socket"); 
+        }
+        webSocketBridge.socket.onclose = function() { 
+           console.log("Disconnected to notification socket"); 
+        }
+	console.log("Finished setting up the websocket")
+
+/*    });
+
+  $(document).ready(function () {
+*/
+
+    $('#get-data').click(function () {
+
+      $.getJSON('http://home-pi:8000/i2c/api/1.0/lighting/32/', function (data) {
+        console.log(data);
+
+        var result = '<ul>';
+        result = result.concat('<li>Status ');
+        result = result.concat(("00000000"+data.status.toString(2)).substr(-8))
+        result = result.concat('</li><li>Config ');
+        result = result.concat(("00000000"+data.config.toString(2)).substr(-8))
+        result = result.concat('</li><li>Lower level delay ');
+        result = result.concat(data.UG_on_delay)
+        result = result.concat('</li><li>Ground level delay ');
+        result = result.concat(data.EG_on_delay)
+        result = result.concat('</li><li>Upper level delay ');
+        result = result.concat(data.OG_on_delay)
+        result = result.concat('</li><li>Firmware ');
+        result = result.concat(data.firmware)
+        result = result.concat('</li>');
+        result = result.concat('</ul>');
+        console.log(result);
+        $('#show-data').html(result);
+      });
+    });
+
+
+
+  });
+
+
+  </script>
+{% endblock %}
+
