@@ -1,4 +1,8 @@
 #!/bin/bash
-cd /home/steve/repositories/SmartHome-Django
-/usr/bin/python3 i2c_pir.py
+
+cd /home/steve/repositories/django/ourhouse_project
+. ourhouse_env/bin/activate
+
+cd /home/steve/repositories/django/ourhouse_project/SmartHome-Django
+python i2c_pir.py
 

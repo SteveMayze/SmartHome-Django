@@ -8,6 +8,7 @@ from i2c.models import Device
 
 from i2c.i2c_lib import i2c_lighting_sync
 from i2c.i2c_lib import i2c_lighting_save_registers
+from i2c.i2c_lib import i2c_get_config
 
 
 
@@ -68,6 +69,13 @@ def edit_zone( request, zone_slug ):
 				print("SAVING REGISTERS {0}".format(str(registers)))
  
 				i2c_lighting_save_registers( zone.device.address, registers )
+
+				device = Device.objects.get(name="Lighting")
+				config = i2c_get_config( device.address )
+				state = LightingState.objects.get_or_create(device=device)[0]
+				state.config = config
+				state.save()
+
 				return index(request)
 			else:
 				print(form.errors)
@@ -102,6 +110,12 @@ def sync( request, address ):
 	updateZone( device=device, name="EG", pir_enabled=config["pir_eg_enabled"], test_active=config["eg_test_active"], on_delay=registers["EG_on_delay"])
 	updateZone( device=device, name="OG", pir_enabled=config["pir_og_enabled"], test_active=config["og_test_active"], on_delay=registers["OG_on_delay"])
 
+
+	device = Device.objects.get(name="Lighting")
+	config = i2c_get_config( device.address )
+	state = LightingState.objects.get_or_create(device=device)[0]
+	state.config = config
+	state.save()
 	return index( request , context_dict = None)
 
 

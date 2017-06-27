@@ -41,7 +41,7 @@ def pir_handler(pin):
 			# LightHistoryBinding.create(history)
 			state.save()
 			logging.info(str(state))
-			channel_layer.send("tl2c_state", {"LightingState": serializers.serialize("json", [state, ])})
+			# channel_layer.send("tl2c_state", {"LightingState": serializers.serialize("json", [state, ])})
 			# consumer_finished.send(sender=None)
 			# Channel("tl2c_state").send({"LightHistory": serializers.serialize("json", [state, ]})
 			logging.info("DEVICE {0}: CH STATUS={1:08b} CONFIG={2:08b}".format(state.device.name, state.status, state.config))

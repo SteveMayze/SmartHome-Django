@@ -29,7 +29,7 @@ with open('./secretkey.txt') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['home-pi', 'localhost']
+ALLOWED_HOSTS = ['dev-pi', 'home-pi', 'localhost']
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
 
 # Application definition
