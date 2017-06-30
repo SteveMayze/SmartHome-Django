@@ -3,8 +3,8 @@ from energy.plotting import plot_summary
 from energy.plotting import plot_for_resource
 
 
-from energy.forms import ResourceGraphForm
-from energy.models import Resource
+from energy.forms import ResourceGraphForm, ResourceEntryForm
+from energy.models import Resource, ResourceEntry
 
 import datetime
 
@@ -80,3 +80,33 @@ def graph_for_resource(request) :
         ## return render (request, 'energy/index.htm', context_dict)
         print("energy.views.graph_for_resource END")
         return plot_for_resource( resource, start_date, end_date)
+
+
+def resource_usage_entry( request, context_dict = None):
+	print("energy.views.resource_usage_entry: BEGIN")
+	
+	if context_dict == None:
+                context_dict = {'pagetitle': 'Our House','pagename': 'Energy',
+                                'titlebar': 'Resource Entry' }
+                                
+	form = ResourceEntryForm()
+	
+	if request.method == 'POST':
+		form = ResourceEntryForm(request.POST)
+		if form.is_valid():
+			resourceEntry = form.save(commit = False)
+			previousEntry = ResourceEntry.objects.filter(resource=resourceEntry.resource, 
+			time_stamp__lt=resourceEntry.time_stamp)[0]
+			
+			resourceEntry.value_open = previousEntry.value_close
+			resourceEntry.value_usage = (resourceEntry.value_close + resourceEntry.value_adjust) - resourceEntry.value_open
+			print("Previous={0}, New={1}".format(previousEntry, resourceEntry))
+			resourceEntry.save()
+			
+			
+			return index(request)
+		else:
+			print(form.errors)
+	context_dict["form"] = form
+	print("energy.views.resource_usage_entry: END")
+	return render(request, 'energy/resource_entry.htm', context=context_dict)

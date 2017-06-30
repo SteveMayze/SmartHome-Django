@@ -10,35 +10,42 @@
         <form class="form-horizontal" action="{% url 'energy:resource_graph_form' %}" method="GET" 
               id="id_graph_form">
               {% csrf_token %}
-			<div class="row">
-				<div class="col-sm-3">
-					<div class="form-group">
+            <fieldset>
+				<div class="row">
+					<div class="col-sm-3">
+						<div class="form-group">
 
-						<label class="control-label" for="id_resource">Resource</label>
-						{{ resource_graph_form.resource }}
+							<label class="control-label" for="id_resource">Resource</label>
+							{{ resource_graph_form.resource }}
+						</div>
 					</div>
-				</div>
-				<div class="col-sm-4">
-					<div class="form-group">
-						<label class="control-label" for="id_start_date">Start date</label>
-						{{ resource_graph_form.start_date }}
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label class="control-label" for="id_start_date">Start date</label>
+							{{ resource_graph_form.start_date }}
+						</div>
 					</div>
-				</div>
-				<div class="col-sm-4">
-					<div class="form-group">
-						<label class="control-label" for="id_end_date">End date</label>
-						{{ resource_graph_form.end_date }}
+					<div class="col-sm-4">
+						<div class="form-group">
+							<label class="control-label" for="id_end_date">End date</label>
+							{{ resource_graph_form.end_date }}
+						</div>
 					</div>
-				</div>
-				<div class="col-sm-1">
-					<div class="form-group">
-						<!-- a href="{% url 'energy:resource_graph_form' %}" class="btn btn-md btn-primary" role="button">Go</a -->
-						<label class="control-label" for="id_form_button"></label>
-						<input id="id_form_button" class="btn btn-md btn-primary " role="button" type="submit" value="OK" />
+					<div class="col-sm-1">
+						<div class="form-group">
+							<!-- a href="{% url 'energy:resource_graph_form' %}" class="btn btn-md btn-primary" role="button">Go</a -->
+							<label class="control-label" for="id_form_button"></label>
+							<input id="id_form_button" class="btn btn-md btn-primary " role="button" type="submit" value="OK" />
+						</div>
 					</div>
-				</div>
-			</div> 
+				</div> 
+			</fieldset>
         </form>
+        <div class="row">
+			<div class="col-sm-12 col-sm-push-10">
+				<a class="btn btn-md btn-primary" href="{% url 'energy:resource_usage_entry' %}">Enter New</a>
+			</div>
+        </div>
         <div class="row">
            <div class="col-sm-6">
                <img  class="image-responsive impage-rounded" id="id_resource_graph" src="{% url 'energy:energy-resource' %}?resource={{resource}}&start_date={{start_date}}&end_date={{end_date}}">
