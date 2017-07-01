@@ -4,6 +4,7 @@ from energy.models import Resource, ResourceEntry
 class ResourceGraphForm( forms.Form ):
 
 	resources = Resource.objects.all()
+	
 
 	resource = forms.ModelChoiceField(label="Resource", queryset=resources, empty_label=None, initial=resources[0], widget=forms.Select(attrs={'class': 'form-control'}))
 	start_date = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control'}))
