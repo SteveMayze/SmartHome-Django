@@ -107,7 +107,7 @@ def resource_usage_entry( request, context_dict = None):
 		if form.is_valid():
 			resourceEntry = form.save(commit = False)
 			previousEntry = ResourceEntry.objects.filter(resource=resourceEntry.resource, 
-			time_stamp__lt=resourceEntry.time_stamp)[0]
+			time_stamp__lt=resourceEntry.time_stamp).order_by('time_stamp')[0]
 			
 			resourceEntry.value_open = previousEntry.value_close
 			resourceEntry.value_usage = (resourceEntry.value_close + resourceEntry.value_adjust) - resourceEntry.value_open
