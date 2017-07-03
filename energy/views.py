@@ -16,9 +16,9 @@ def index( request, context_dict=None ):
 		if context_dict == None:
 				context_dict = {'pagetitle': 'Our House','pagename': 'Energy',
 								'titlebar': 'Energy' }
-				resource = "Gas"
+				## resource = "Gas"
 				end_date = datetime.date.today()
-				start_date = end_date + datetime.timedelta(days = -(365*2))
+				start_date = end_date + datetime.timedelta(days = -((365*2.5)))
 				
 				context_dict["end_date"] = end_date.isoformat()
 				context_dict["start_date"] = start_date.isoformat()
@@ -106,16 +106,29 @@ def resource_usage_entry( request, context_dict = None):
 
 		if form.is_valid():
 			resourceEntry = form.save(commit = False)
-			previousEntry = ResourceEntry.objects.filter(resource=resourceEntry.resource, 
-			time_stamp__lt=resourceEntry.time_stamp).order_by('time_stamp')[0]
+			
+			end_range = resourceEntry.time_stamp
+			start_range = end_range + datetime.timedelta(days = -(90))
+			print("energy.views: resource={0}, start_date={1}, end_date={2}".format(resourceEntry.resource, start_range, end_range))
+
+			previousEntry = ResourceEntry.objects.filter(resource=resourceEntry.resource, time_stamp__range=[start_range, end_range]).order_by('-time_stamp')[0]
 			
 			resourceEntry.value_open = previousEntry.value_close
 			resourceEntry.value_usage = (resourceEntry.value_close + resourceEntry.value_adjust) - resourceEntry.value_open
-			print("Previous={0}, New={1}".format(previousEntry, resourceEntry))
+			print("Previous(Date={0}, Open={1}, Close={2})".format(previousEntry.time_stamp, previousEntry.value_open, previousEntry.value_close))
+			print("New     (Date={0}, Open={1}, Close={2})".format(resourceEntry.time_stamp, resourceEntry.value_open, resourceEntry.value_close))
 			resourceEntry.save()
+			context_dict = {'pagetitle': 'Our House','pagename': 'Energy',
+								'titlebar': 'Energy' }
+			end_date = datetime.date.today()
+			start_date = end_date + datetime.timedelta(days = -(365*2))
+				
+			context_dict["end_date"] = end_date.isoformat()
+			context_dict["start_date"] = start_date.isoformat()
+			context_dict["resource"] = resourceEntry.resource.id
 			
 			
-			return index(request)
+			return index(request, context_dict=context_dict)
 		else:
 			print(form.errors)
 	context_dict["form"] = form
