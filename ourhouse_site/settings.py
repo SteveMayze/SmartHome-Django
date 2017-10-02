@@ -29,7 +29,12 @@ with open('./secretkey.txt') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# django-backend is defined in the nginx configuraiton. For development
+# and running daphne local (i.e. runserver) then dev-pi or the local
+# Raspberry Pi name should be added.
+# ALLOWED_HOSTS = ['django-backend', 'localhost']
 ALLOWED_HOSTS = ['dev-pi', 'home-pi', 'localhost']
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
 
 # Application definition

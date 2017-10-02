@@ -1,0 +1,41 @@
+{% extends 'base.htm' %}
+{% load staticfiles %}
+
+{% block page_title_block %}
+    <h1>{{ pagetitle }}</h1>
+    <h2>{{ pagename }}</h2>
+{% endblock %}
+
+{% block body_block %}
+	<div class="container">
+		<form class="form-horizontal" id="resource_usage_form" role="form" method="post" 
+			action="{% url 'energy:resource_usage_entry' %}">
+			{% csrf_token %}
+			<fieldset>
+				<div class="row">
+					{% for hidden in form.hidden_fields %}
+						{{ hidden }}
+					{% endfor %}
+					{% for field in form.visible_fields %}
+						{{ field.errors }}
+						{{ field.help_text }}
+						<div class="form-group col-sm-4">
+							<label class="control-label col-sm-1" for="{{ zone_form.name.id_for_label }}">{{field.label}}</label>
+							{{ field }}
+						</div>
+					{% endfor %}
+				</div>
+			</fieldset>
+			<input class="btn btn-md btn-primary" type="submit" name="submit" value="Add usage"/>
+		</form>
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+	$( function() {
+		$( "#id_time_stamp" ).datepicker({"dateFormat": "yy-mm-dd"});
+	} );
+</script>
+{% endblock %}
