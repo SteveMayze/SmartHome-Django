@@ -21,13 +21,10 @@ def set_bit(data, index, value):
 	print("AFTER {0:b}, index={1}, value={2}".format(data, index, value))
 	return data
 
-# Create your views here.
 
+def index( request ):
 
-def index( request , context_dict = None):
-
-        if context_dict == None:
-               return dashboard_refresh( request )
+        context_dict = dashboard_refresh()
 
         zone_list = Zone.objects.order_by('name')
         # context_dict = {"pagetitle": "Our House", "pagename": "Lighting", "titlebar": "Lighting zones", "zones": zone_list}
@@ -86,38 +83,6 @@ def edit_zone( request, zone_slug ):
 			'titlebar': 'Lighting', 'zone_form': form}
 	return render (request, 'lighting/edit_zone.htm', context_dict)
 
-@login_required
-def sync( request, address ):
-	registers = i2c_lighting_sync( address )
-	print("Lighting: ADDRESS={0} ({0:2x}) REGISTERS={1}".format(int(address), str(registers)))
-	pir_config = (0xF0 & registers["config"]) >> 4
-	zone_config = 0x0F & registers["config"]
-	status = registers["status"]
-	config = {}
-	config["pir_ug_enabled"] = 0x01 & pir_config
-	config["pir_eg_enabled"] = (0x02 & pir_config) >> 1
-	config["pir_og_enabled"] = (0x04 & pir_config) >> 2
-
-	config["ug_test_active"] = 0x01 & zone_config
-	config["eg_test_active"] = (0x02 & zone_config)>> 1
-	config["og_test_active"] = (0x04 & zone_config) >> 2
-
-	print("CONFIG={0}".format(str(config)))
-
-	device = Device.objects.get(address = address)
-
-	updateZone( device=device, name="UG", pir_enabled=config["pir_ug_enabled"], test_active=config["ug_test_active"], on_delay=registers["UG_on_delay"])
-	updateZone( device=device, name="EG", pir_enabled=config["pir_eg_enabled"], test_active=config["eg_test_active"], on_delay=registers["EG_on_delay"])
-	updateZone( device=device, name="OG", pir_enabled=config["pir_og_enabled"], test_active=config["og_test_active"], on_delay=registers["OG_on_delay"])
-
-
-	device = Device.objects.get(name="Lighting")
-	config = i2c_get_config( device.address )
-	state = LightingState.objects.get_or_create(device=device)[0]
-	state.config = config
-	state.save()
-	return index( request , context_dict = None)
-
 
 def updateZone(device, name, pir_enabled, test_active, on_delay):
 	print("Saving device={0}, name={1}, pir_enabled={2}, test_active={3}, on_delay={4}".format(str(device), name, pir_enabled, test_active, on_delay))
@@ -137,8 +102,15 @@ def dashboard( request , status_dict=None):
         response = render(request, 'main/dashboard.htm', context=status_dict)
         return response
 
-def dashboard_refresh( request ):
+def dashboard_refresh():
+        
         device = Device.objects.get(name="Lighting")
+        registers = i2c_lighting_sync( device.address )
+        state = LightingState.objects.get_or_create(device=device)[0]
+        state.status = registers["status"]
+        state.config = registers["config"]
+        state.save()
+        
         history = LightingState.objects.get(device = device)
         status_int = history.status
         config_int = history.config
@@ -176,8 +148,7 @@ def dashboard_refresh( request ):
 
         print("status_refresh status_dict=" + str(status_dict))
                 
-        return index( request, context_dict=status_dict )
-
+        return status_dict
 
 
 def about( request ):
