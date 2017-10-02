@@ -184,15 +184,6 @@
 	   
 			 </tbody>
 		  </table>
-		  <!-- div class="container" -->
-			 {% if user.is_authenticated %}
-				<div class="row">
-				   {% with zones.0 as zone %}
-					  <a href="{% url 'lighting:sync' zone.device.address %}" class="btn btn-sm btn-primary" role="button">Sync</a>
-				   {% endwith %}
-				</div>
-			 {% endif %}
-		  <!-- /div -->
 	   </div>
 	   </div>
    </div>
@@ -203,6 +194,7 @@
 
 {% block javascript %}
   <script>
+	 
      $(function () {
         var ws_path = "/stream/";
         console.log("Connecting to  + ws_path")
