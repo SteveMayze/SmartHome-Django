@@ -29,7 +29,12 @@ with open('./secretkey.txt') as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['home-pi', 'localhost']
+# django-backend is defined in the nginx configuraiton. For development
+# and running daphne local (i.e. runserver) then dev-pi or the local
+# Raspberry Pi name should be added.
+# ALLOWED_HOSTS = ['django-backend', 'localhost']
+ALLOWED_HOSTS = ['dev-pi', 'home-pi', 'localhost']
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
 
 # Application definition
@@ -41,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mod_wsgi.server',
+    'channels',
+    #'mod_wsgi.server',
     'registration',
     'main',
     'i2c',
@@ -58,6 +64,20 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+redis_host = os.environ.get('REDIS_HOST', 'localhost')
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "asgi_redis.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(redis_host, 6379)],
+            },
+        #	"BACKEND": "asgiref.inmemory.ChannelLayer",
+        "ROUTING": "ourhouse_site.routing.channel_routing",
+        },
+}
+
 
 ROOT_URLCONF = 'ourhouse_site.urls'
 

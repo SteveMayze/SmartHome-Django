@@ -11,7 +11,7 @@ def populate():
 
     devices = [ 
         { "address": 0, "name":"Undefined", "description":"Not allocated"} ,
-        { "address": 140, "name":"Lighting", "description":"Stairwell lighting"},
+        { "address": 32, "name":"Lighting", "description":"Stairwell lighting"},
         { "address": 150, "name":"Temp: Out", "description": "Outside Temperature"},
         { "address": 160, "name":"MP3 Sound", "description":"Raspi-Alarm unit"}
         ]

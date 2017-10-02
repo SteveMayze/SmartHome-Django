@@ -23,6 +23,10 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+# lighting/migrations/0002_lightingstate.py
+*/migrations/[0-9]*_*.py
+doc/.~lock.*#
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

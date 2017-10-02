@@ -1,0 +1,15 @@
+
+[Unit]
+Description=supervisord startup
+After=multi-user.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/supervisord -c /home/pi/django/SmartHome-Django-energy_ui/scripts/supervisord.conf
+PIDFile=/tmp/supervisord.pid
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target
+
+
